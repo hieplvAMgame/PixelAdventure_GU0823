@@ -5,10 +5,10 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
 {
-    Rigidbody2D rb;
+    [HideInInspector] public Rigidbody2D rb;
     [Header("MOVEMENT")]
     [SerializeField] float moveSpeed;
-    [SerializeField] float h_Input;
+    [HideInInspector] public float h_Input;
     bool isFacingRight = true;
 
     [Header("JUMP")]
@@ -18,72 +18,76 @@ public class PlayerController : MonoBehaviour
     [SerializeField] LayerMask layerGround;
     [SerializeField] float fallingMultile;
 
-    [SerializeField] int extraJumpTimes = 1;
-    int remainingJumpTimes;
+    //[SerializeField] int extraJumpTimes = 1;
+    //int remainingJumpTimes;
     float timeCounter;
     [Header("WALL JUMP")]
     [SerializeField] Transform wallCheck;
     [SerializeField] LayerMask wallLayer;
     [SerializeField] Vector2 wallJumpForce;
     [SerializeField] float wallJumpSpeed;
-    bool isTouchingWall;
-    bool isSliding;
+    public bool isTouchingWall;
+    public bool isSliding;
 
 
     Vector2 velocityGravity;
-    bool isJumping;
-    bool isGrounded;
+    public bool isJumping;
+    public bool isGrounded;
     private void Awake()
     {
         velocityGravity = new Vector2(0, -Physics2D.gravity.y);
         rb = GetComponent<Rigidbody2D>();
     }
-
+    public void GetInput()
+    {
+        h_Input = Input.GetAxis("Horizontal");
+        if ((h_Input < 0 && isFacingRight) || (h_Input > 0 && !isFacingRight))
+            Flip();
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            isJumping = true;
+            #region Double Jump
+            //else if (remainingJumpTimes > 0)
+            //{
+            //    if (!isSliding)
+            //    {
+            //        rb.velocity = new Vector2(rb.velocity.x, jumpForce * .8f);
+            //        remainingJumpTimes--;
+            //    }
+            //    //else
+            //    //{
+            //    //    rb.velocity = new Vector2(-h_Input * wallJumpForce.x, wallJumpForce.y);
+            //    //}
+            //}
+            #endregion
+        }
+        if (Input.GetKeyUp(KeyCode.Space) && !isGrounded)
+            isJumping = false;
+    }
+    public void CheckWorld()
+    {
+        isGrounded = Physics2D.OverlapBox(groundCheck.position, new Vector2(.8f, .2f), 0, layerGround);
+        isTouchingWall = Physics2D.OverlapBox(wallCheck.position, new Vector2(.2f, .8f), 0, wallLayer);
+    }
     // Update is called once per frame
     void Update()
     {
-        h_Input = Input.GetAxis("Horizontal");
-        isGrounded = Physics2D.OverlapBox(groundCheck.position, new Vector2(.8f, .2f), 0, layerGround);
-        isTouchingWall = Physics2D.OverlapBox(wallCheck.position, new Vector2(.2f, .8f), 0, wallLayer);
-        if ((h_Input < 0 && isFacingRight) || (h_Input > 0 && !isFacingRight))
-            Flip();
-        #region JUMP
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            if (isGrounded)
-            {
-                remainingJumpTimes = extraJumpTimes;
-                rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-                isJumping = true;
-                timeCounter = 0;
-            }
-            else if (remainingJumpTimes > 0)
-            {
-                if (!isSliding)
-                {
-                rb.velocity = new Vector2(rb.velocity.x, jumpForce * .8f);
-                remainingJumpTimes--;
-                }
-                else
-                {
-                    rb.velocity = new Vector2(-h_Input * wallJumpForce.x, wallJumpForce.y);
-                }
-            }
-        }
-        if (Input.GetKeyUp(KeyCode.Space) && !isGrounded)
-        {
-            isJumping = false;
-            if (rb.velocity.y > 0)
-                rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * .7f);
-        }
-        // Apply more gravity - player falling fast
+        GetInput();
+        CheckWorld();
+    }
+    public void HandleOnAir()
+    {
         if (rb.velocity.y < 0)
         {
             rb.velocity -= velocityGravity * fallingMultile * Time.deltaTime;
         }
-        else
-        if (rb.velocity.y > 0 && isJumping)
+        else if (rb.velocity.y > 0)
         {
+            if (!isJumping)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * .7f);
+                return;
+            }
             timeCounter += Time.deltaTime;
             if (timeCounter > timeJump) isJumping = false;
             float curMultiple = fallingMultile;
@@ -94,8 +98,14 @@ public class PlayerController : MonoBehaviour
                 rb.velocity += velocityGravity * curMultiple * Time.deltaTime;
             }
         }
-        #endregion
-
+    }
+    public void Jump()
+    {
+        if (isJumping && isGrounded)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+            timeCounter = 0;
+        }
     }
     void Flip()
     {
@@ -106,11 +116,13 @@ public class PlayerController : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        rb.velocity = new Vector2(h_Input * moveSpeed, rb.velocity.y);
-
+        MoveHorizontal();
         WallSlide();
         WallJump();
+        HandleOnAir();
+        Jump();
     }
+    public void MoveHorizontal()=> rb.velocity = new Vector2(h_Input * moveSpeed, rb.velocity.y);
     void WallSlide()
     {
         if (isTouchingWall && !isGrounded && rb.velocity.y < 0)
@@ -128,7 +140,7 @@ public class PlayerController : MonoBehaviour
     {
         if (isJumping && isSliding)
         {
-            rb.AddForce(new Vector2(wallJumpForce.x * (isFacingRight?-1:1), wallJumpForce.y), ForceMode2D.Impulse);
+            rb.velocity = new Vector2(wallJumpForce.x * (isFacingRight ? -1 : 1), wallJumpForce.y);
             Flip();
             isJumping = false;
         }

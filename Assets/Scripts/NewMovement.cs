@@ -33,7 +33,7 @@ public class NewMovement : MonoBehaviour
     [SerializeField] float walljumpDirection = -1;
 
     [Header("Other")]
-    [SerializeField] Animator anim;
+    [SerializeField] Animator anim = default;
     private Rigidbody2D rb;
 
 
@@ -49,7 +49,7 @@ public class NewMovement : MonoBehaviour
     {
         Inputs();
         CheckWorld();
-        AnimationControl();
+        //AnimationControl();
 
     }
 
