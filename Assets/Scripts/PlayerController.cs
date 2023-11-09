@@ -26,7 +26,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] LayerMask wallLayer;
     [SerializeField] Vector2 wallJumpForce;
     [SerializeField] float wallJumpSpeed;
-    bool isWalled;
+    bool isTouchingWall;
     bool isSliding;
 
 
@@ -44,7 +44,7 @@ public class PlayerController : MonoBehaviour
     {
         h_Input = Input.GetAxis("Horizontal");
         isGrounded = Physics2D.OverlapBox(groundCheck.position, new Vector2(.8f, .2f), 0, layerGround);
-        isWalled = Physics2D.OverlapBox(wallCheck.position, new Vector2(.2f, .8f), 0, wallLayer);
+        isTouchingWall = Physics2D.OverlapBox(wallCheck.position, new Vector2(.2f, .8f), 0, wallLayer);
         if ((h_Input < 0 && isFacingRight) || (h_Input > 0 && !isFacingRight))
             Flip();
         #region JUMP
@@ -96,16 +96,6 @@ public class PlayerController : MonoBehaviour
         }
         #endregion
 
-        #region WALL JUMP
-        if (isWalled && !isGrounded && h_Input != 0)
-        {
-            isSliding = true;
-            remainingJumpTimes = extraJumpTimes;
-        }
-        else
-            isSliding = false;
-
-        #endregion
     }
     void Flip()
     {
@@ -117,9 +107,37 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         rb.velocity = new Vector2(h_Input * moveSpeed, rb.velocity.y);
+
+        WallSlide();
+        WallJump();
+    }
+    void WallSlide()
+    {
+        if (isTouchingWall && !isGrounded && rb.velocity.y < 0)
+        {
+            isSliding = true;
+        }
+        else
+            isSliding = false;
         if (isSliding)
         {
-            rb.velocity = new Vector2(0, Mathf.Clamp(rb.velocity.y, -wallJumpSpeed, float.MaxValue));
+            rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -wallJumpSpeed, float.MaxValue));
         }
+    }
+    void WallJump()
+    {
+        if (isJumping && isSliding)
+        {
+            rb.AddForce(new Vector2(wallJumpForce.x * (isFacingRight?-1:1), wallJumpForce.y), ForceMode2D.Impulse);
+            Flip();
+            isJumping = false;
+        }
+    }
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.blue;
+        Gizmos.DrawCube(groundCheck.position, new Vector2(.8f, .2f));
+        Gizmos.color = Color.green;
+        Gizmos.DrawCube(wallCheck.position, new Vector2(.2f, .8f));
     }
 }
