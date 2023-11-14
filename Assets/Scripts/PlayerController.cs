@@ -5,10 +5,11 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
 {
+    public Animator anim;
     [HideInInspector] public Rigidbody2D rb;
     [Header("MOVEMENT")]
     [SerializeField] float moveSpeed;
-    [HideInInspector] public float h_Input;
+    public float h_Input;
     bool isFacingRight = true;
 
     [Header("JUMP")]
@@ -68,12 +69,18 @@ public class PlayerController : MonoBehaviour
     {
         isGrounded = Physics2D.OverlapBox(groundCheck.position, new Vector2(.8f, .2f), 0, layerGround);
         isTouchingWall = Physics2D.OverlapBox(wallCheck.position, new Vector2(.2f, .8f), 0, wallLayer);
+        anim.SetBool("Jump", !isGrounded);
     }
     // Update is called once per frame
     void Update()
     {
         GetInput();
         CheckWorld();
+    }
+    public float forceJumpKill = 10;
+    public void JumpOnKill()
+    {
+        rb.velocity = new Vector2(0, forceJumpKill);
     }
     public void HandleOnAir()
     {
@@ -86,16 +93,18 @@ public class PlayerController : MonoBehaviour
             if (!isJumping)
             {
                 rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * .7f);
-                return;
             }
-            timeCounter += Time.deltaTime;
-            if (timeCounter > timeJump) isJumping = false;
-            float curMultiple = fallingMultile;
-            float t = timeCounter / timeJump;
-            if (t > .5f)
+            else
             {
-                curMultiple = fallingMultile * (1 - t);
-                rb.velocity += velocityGravity * curMultiple * Time.deltaTime;
+                timeCounter += Time.deltaTime;
+                if (timeCounter > timeJump) isJumping = false;
+                float curMultiple = fallingMultile;
+                float t = timeCounter / timeJump;
+                if (t > .5f)
+                {
+                    curMultiple = fallingMultile * (1 - t);
+                    rb.velocity += velocityGravity * curMultiple * Time.deltaTime;
+                }
             }
         }
     }
@@ -117,12 +126,17 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         MoveHorizontal();
+        Jump();
+        HandleOnAir();
         WallSlide();
         WallJump();
-        HandleOnAir();
-        Jump();
+        anim.SetFloat("yVelocity", rb.velocity.y);
     }
-    public void MoveHorizontal()=> rb.velocity = new Vector2(h_Input * moveSpeed, rb.velocity.y);
+    public void MoveHorizontal()
+    {
+        rb.velocity = new Vector2(h_Input * moveSpeed, rb.velocity.y);
+        anim.SetFloat("xVelocity", Mathf.Abs(h_Input));
+    }
     void WallSlide()
     {
         if (isTouchingWall && !isGrounded && rb.velocity.y < 0)
