@@ -10,7 +10,7 @@ public class MoveChicken : IState
     }
     public override void OnEnter()
     {
-        enemy.animator.Play("Idle");
+        //enemy.animator.Play("Idle");
     }
     public override void OnExit()
     {
@@ -18,7 +18,7 @@ public class MoveChicken : IState
     }
     public override void OnFrameUpdate()
     {
-        if (enemy.counter > enemy.timeDelayAttack)
+        //if (enemy.counter > enemy.timeDelayAttack)
             enemy.GetComponent<StateMachine>().ChangeState(ENEMY_STATE.ATTACK);
     }
     public override void OnPhysicsUpdate()

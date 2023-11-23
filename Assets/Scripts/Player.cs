@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+
     [SerializeField] CharacterData data;
     public CharacterAttributeHandle characterAttributeHandle;
     PlayerController playerController;

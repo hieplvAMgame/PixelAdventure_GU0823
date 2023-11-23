@@ -15,7 +15,7 @@ public class DieChicken : IState
         enemy.GetComponent<SpriteRenderer>().sortingOrder = 10;
         enemy.GetComponent<Collider2D>().isTrigger = true;
         rb.velocity = new Vector2(rb.velocity.x, enemy.jumpDieForce);
-        enemy.animator.Play("Hit");
+        //enemy.animator.Play("Hit");
     }
 
     public override void OnExit()

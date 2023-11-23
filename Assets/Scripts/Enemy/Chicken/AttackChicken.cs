@@ -8,7 +8,7 @@ public class AttackChicken : IState
 
     public override void OnEnter()
     {
-        enemy.counter = 0;
+        //enemy.counter = 0;
         GameObject egg = ObjectPooling.Instance.GetObjectFromPool();
         egg.transform.position = enemy.transform.position;
         egg.SetActive(true);
