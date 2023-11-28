@@ -15,6 +15,7 @@ public class Enemy : MonoBehaviour
     public StateMachineHandle stateMachine;
     [Header("Moving")]
     public float limitX;
+    public float maxX, minX;
     public float delayTimeAttack;
     public float moveSpeed;
     public bool isFacingRight = true;
@@ -39,6 +40,11 @@ public class Enemy : MonoBehaviour
         float x = transform.position.x + (isFacingRight ? 1 : -1) * distanceCheck;
         return new Vector2(x,transform.position.y);
     }
+    public void Flip()
+    {
+        isFacingRight = !isFacingRight;
+        transform.localScale = new Vector3(transform.localScale.x*-1,transform.localScale.y,transform.localScale.z); ;
+    }
     private void Awake()
     {
         spr = GetComponent<SpriteRenderer>();
@@ -47,7 +53,7 @@ public class Enemy : MonoBehaviour
         animationHandle = GetComponent<AnimationHandle>();
         characterAttributeHandle.Init();
         stateMachine.SetUp();
-        this.WaitForSeconds(2, () => stateMachine.ChangeState(ENEMY_STATE.DIE));
+        //this.WaitForSeconds(2, () => stateMachine.ChangeState(ENEMY_STATE.DIE));
     }
     public bool canShoot = false;
     public float distanceCheck;
@@ -62,5 +68,12 @@ public class Enemy : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         
+    }
+
+    //Debug
+
+    public void ChangeState(int state)
+    {
+        stateMachine.ChangeState((ENEMY_STATE)state);
     }
 }

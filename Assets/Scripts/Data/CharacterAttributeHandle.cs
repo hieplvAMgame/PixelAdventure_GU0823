@@ -38,6 +38,17 @@ public class CharacterAttributeHandle
             callback(false);
         }
     }
+    public void BonusHP(int val)
+    {
+        hp += val;
+        currentHp += val;
+        if (currentHp >= hp) currentHp = hp;
+    }
+    public void Healing(int val)
+    {
+        currentHp+= val;
+        if (currentHp >= hp) currentHp = hp;
+    }
     //public virtual void OnDead()
     //{
     //    //

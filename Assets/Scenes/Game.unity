@@ -446,9 +446,23 @@ CompositeCollider2D:
   m_GeometryType: 0
   m_GenerationType: 0
   m_EdgeRadius: 0
-  m_ColliderPaths: []
+  m_ColliderPaths:
+  - m_Collider: {fileID: 350104008}
+    m_ColliderPaths:
+    - - X: -120000000
+        Y: -60000000
+      - X: 110000000
+        Y: -60000000
+      - X: 110000000
+        Y: -20000000
+      - X: -120000000
+        Y: -20000000
   m_CompositePaths:
-    m_Paths: []
+    m_Paths:
+    - - {x: 10.99997, y: -6}
+      - {x: 10.99997, y: -2}
+      - {x: -12, y: -2.0000293}
+      - {x: -11.99997, y: -6}
   m_VertexDistance: 0.0005
   m_OffsetDistance: 0.00005
 --- !u!50 &350104005
@@ -1547,7 +1561,7 @@ TilemapCollider2D:
   m_Material: {fileID: 6200000, guid: c8ad28e45cab240488e3950e2491479b, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
-  m_UsedByComposite: 0
+  m_UsedByComposite: 1
   m_Offset: {x: 0, y: 0}
   m_MaximumTileChangeCount: 1000
   m_ExtrusionFactor: 0

@@ -57,6 +57,12 @@ public interface IEnemyState
 {
     ENEMY_STATE state { get; set; }
     Rigidbody2D rb { get; set; }
+    /// <summary>
+    /// Set up enemy param when initialize
+    /// </summary>
+    /// <param name="enemy"></param>
+    /// <param name="rb"></param>
+    /// <param name="state"></param>
     void SetEnemy(Enemy enemy, Rigidbody2D rb, ENEMY_STATE state);
 
     void OnEnter();
