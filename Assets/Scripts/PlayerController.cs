@@ -150,6 +150,20 @@ public class PlayerController : MonoBehaviour
             rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -wallJumpSpeed, float.MaxValue));
         }
     }
+    public void HigherJump(float multipleJumpForce, float duration)
+    {
+        StartCoroutine(CoHigherJump(multipleJumpForce, duration));
+    }
+    IEnumerator CoHigherJump(float multipleJumpForce, float duration)
+    {
+        float count = 0;
+        jumpForce = multipleJumpForce * jumpForce;
+        rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+        while (count < duration)
+            count += Time.deltaTime;
+        jumpForce = jumpForce / multipleJumpForce;
+        yield return new WaitForEndOfFrame();
+    }
     void WallJump()
     {
         if (isJumping && isSliding)

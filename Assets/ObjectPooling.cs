@@ -7,7 +7,7 @@ public class ObjectPooling : MonoBehaviour
     public static ObjectPooling Instance;
 
     public GameObject egg;
-    List<GameObject> pool = new List<GameObject>();
+    Stack<GameObject> pool = new Stack<GameObject>();
     public int size = 30;
     private void Awake()
     {
@@ -17,24 +17,34 @@ public class ObjectPooling : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        for(int i = 0;i< size; i++)
+        CreatePool();
+    }
+    void CreatePool()
+    {
+        for (int i = 0; i < size; i++)
         {
             GameObject clone = Instantiate(egg, this.transform);
-            clone.gameObject.SetActive(false);
-            pool.Add(clone);
+            clone.SetActive(false);
+            pool.Push(clone);
         }
     }
-
+    GameObject _temp;
     public GameObject GetObjectFromPool()
     {
-        foreach(GameObject obj in pool)
+        if (pool.Count > 0)
         {
-            if(!obj.activeInHierarchy)
-                return obj;
+            _temp = pool.Pop();
+            return _temp;
         }
         GameObject newClone = Instantiate(egg, this.transform);
-        newClone.gameObject.SetActive(false);
-        pool.Add(newClone);
+        newClone.SetActive(false);
         return newClone;
     }
+    public void ReturnObjToPool(GameObject obj)
+    {
+        obj.SetActive(false);
+        pool.Push(obj);
+    }
 }
+
+// Object.Instance.ReturnObjToPool(gameObject);

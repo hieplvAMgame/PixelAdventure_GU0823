@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, IGameState
 {
 
     [SerializeField] CharacterData data;
@@ -15,6 +15,10 @@ public class Player : MonoBehaviour
         characterAttributeHandle.Init();
         playerController = GetComponent<PlayerController>();
         hpBar.OnInit(data.hp);
+    }
+    private void Start()
+    {
+        GameManager.instance.AddRigister(this);
     }
     private void Update()
     {
@@ -32,6 +36,7 @@ public class Player : MonoBehaviour
                 hpBar.OnChangeHP(-enemy.characterAttributeHandle.GetAtk());
                 if (isDie)
                 {
+                    GameManager.instance.GameOver();
                     // anim Die
                     // Show Game Over
                     // Pause game
@@ -57,5 +62,39 @@ public class Player : MonoBehaviour
             playerController.JumpOnKill();
             collision.transform.parent.gameObject.SetActive(false);
         }
+    }
+
+    public void GamePrepare()
+    {
+        // player setup chi so
+    }
+
+    public void GameStart()
+    {
+
+    }
+
+    public void GamePause()
+    {
+
+    }
+
+    public void GameResume()
+    {
+
+    }
+
+    public void GameWin()
+    {
+
+    }
+
+    public void GameOver()
+    {
+
+    }
+    private void OnDestroy()
+    {
+        GameManager.instance.RemoveRegister(this);
     }
 }
