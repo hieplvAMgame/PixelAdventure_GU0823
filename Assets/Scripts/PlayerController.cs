@@ -36,6 +36,7 @@ public class PlayerController : MonoBehaviour
     public bool isGrounded;
     private void Awake()
     {
+        anim = GetComponent<Animator>();    
         velocityGravity = new Vector2(0, -Physics2D.gravity.y);
         rb = GetComponent<Rigidbody2D>();
     }

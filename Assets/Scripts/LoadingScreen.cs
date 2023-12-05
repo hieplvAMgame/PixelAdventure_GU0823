@@ -11,8 +11,9 @@ public class LoadingScreen : Singleton<LoadingScreen>
     [SerializeField] Image progressBar = default;
 
     bool isLoaded = false;
-    private void Awake()
+    public override void Awake()
     {
+        base.Awake();
         DontDestroyOnLoad(gameObject);
     }
     public void ActiveScene()

@@ -2,19 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour, IGameState
+public class Player : Singleton<Player>, IGameState
 {
-
-    [SerializeField] CharacterData data;
+    public CharacterData data;
     public CharacterAttributeHandle characterAttributeHandle;
     PlayerController playerController;
     public HpBarUI hpBar;
-    private void Awake()
+    public override void Awake()
     {
+        base.Awake();
         characterAttributeHandle = new CharacterAttributeHandle(data);
         characterAttributeHandle.Init();
         playerController = GetComponent<PlayerController>();
-        hpBar.OnInit(data.hp);
+        //hpBar.OnInit(data.hp);
     }
     private void Start()
     {
