@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using Unity.VisualScripting;
+
 public class Demo : MonoBehaviour
 {
     public int id;
@@ -15,17 +17,25 @@ public class Demo : MonoBehaviour
     {
         transform.DOMove(target.position, duration);
     }
-    public void MoveFollowList(List<Transform> listTrans, float duration)
+    int count = 0;
+    int target;
+    Vector3 nextPos;
+    public void MoveFollowList(List<Transform> list, float duration)
     {
-        transform.position = listTrans[id].position;
-        int target = 0;
-        for (int i = 0; i < listTrans.Count; i++)
+        StartCoroutine(CoMoveFollowList(list, duration));
+    }
+    IEnumerator CoMoveFollowList(List<Transform> list, float duration)
+    {
+        transform.position = list[id].position;
+        while (count < list.Count)
         {
-            target = id + i + 1;
-            if (target >= listTrans.Count)
-                target -= listTrans.Count;
-            transform.DOMove(listTrans[target].position, duration);
-            this.WaitForSeconds(duration, () => { });
+            count++;
+            target = id + count;
+            if (target >= list.Count)
+                target = id + count - list.Count;
+            nextPos = list[target].position;
+            transform.DOMove(nextPos, duration);
+            yield return new WaitForSeconds(duration);
         }
     }
     public void ChangeColor(Color color)
