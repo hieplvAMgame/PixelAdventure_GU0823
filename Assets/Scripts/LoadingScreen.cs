@@ -15,6 +15,14 @@ public class LoadingScreen : Singleton<LoadingScreen>
     {
         base.Awake();
         DontDestroyOnLoad(gameObject);
+
+    }
+    private void Start()
+    {
+        GoToScene("Home", () =>
+        {
+            UIManager.instance.ShowPanel(true);
+        });
     }
     public void ActiveScene()
     {

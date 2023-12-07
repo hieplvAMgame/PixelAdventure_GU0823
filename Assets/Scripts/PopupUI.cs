@@ -252,3 +252,9 @@ public enum PopUpAnimate
     AUTO_CLOSE,
     FADE_SLIDE
 }
+public struct POPUP_NAME
+{
+    public const string DemoPopup = "DemoPopup";
+    public const string SettingPopup = "SettingPopup";
+    public const string CurrencyPopup = "CurrencyPopup";
+}

@@ -22,18 +22,20 @@ public class Demo : MonoBehaviour
     Vector3 nextPos;
     public void MoveFollowList(List<Transform> list, float duration)
     {
-        StartCoroutine(CoMoveFollowList(list, duration));
+       Coroutine curThread = StartCoroutine(CoMoveFollowList(list, duration));
     }
     IEnumerator CoMoveFollowList(List<Transform> list, float duration)
     {
         transform.position = list[id].position;
         while (count < list.Count)
         {
+            Debug.Log($"COUNT {count}");
             count++;
             target = id + count;
             if (target >= list.Count)
                 target = id + count - list.Count;
             nextPos = list[target].position;
+            Debug.Log($"Target {target}");
             transform.DOMove(nextPos, duration);
             yield return new WaitForSeconds(duration);
         }

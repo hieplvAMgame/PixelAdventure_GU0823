@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class UIManager : Singleton<UIManager>, IGameState
 {
-    public GameObject gameOverPanel;
-    public GameObject gameWinPanel;
-    public GameObject pausePanel;
+    public GameObject gameOverPanel = default;
+    public GameObject gameWinPanel = default;
+    public GameObject pausePanel = default;
+    public GameObject homePanel = default;
+    public GameObject ingamePanel = default;
     GAME_STATE curState;
     private void Start()
     {
-        GameManager.instance.AddRigister(this);
+        //GameManager.instance.AddRigister(this);
     }
     public void GameOver()
     {
@@ -54,8 +56,14 @@ public class UIManager : Singleton<UIManager>, IGameState
         //gameWinPanel.SetActive(true);
         //pausePanel.SetActive(false);
     }
-    private void OnDestroy()
+    //private void OnDestroy()
+    //{
+    //    GameManager.instance.RemoveRegister(this);
+    //}
+    
+    public void ShowPanel(bool isShowHome = false)
     {
-        GameManager.instance.RemoveRegister(this);
+        homePanel.SetActive(isShowHome);
+        //ingamePanel.SetActive(!isShowHome);
     }
 }
